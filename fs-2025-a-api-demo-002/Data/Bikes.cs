@@ -1,4 +1,4 @@
-﻿namespace fs_2025_a_api_demo_002.Data
+﻿/*namespace fs_2025_a_api_demo_002.Data
 {
     public class BikeStation
     {
@@ -27,3 +27,4 @@
 }
 
 
+*/
