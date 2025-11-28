@@ -42,7 +42,6 @@ namespace fs_2025_assessment_1_75026.Services
 
             foreach (var station in stations)
             {
-                // Generate new random availability
                 int newAvailableBikes = _random.Next(0, station.BikeStands + 1);
                 int newAvailableStands = station.BikeStands - newAvailableBikes;
 
@@ -51,7 +50,9 @@ namespace fs_2025_assessment_1_75026.Services
                 station.LastUpdate = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             }
 
-            _logger.LogInformation("🔄 Updated {count} stations at {time}",
+            _stationService.SaveAllStations(stations);
+
+            _logger.LogInformation("Updated {count} stations at {time}",
                 stations.Count,
                 DateTime.Now.ToString("HH:mm:ss"));
         }

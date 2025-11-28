@@ -5,96 +5,64 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace fs_2025_assessment_1_75026.Services
 
-// Service interface
-{
-    public interface IStationService
-    {
-        List<Station> GetAllStations();
-        Station? GetStationByNumber(int number);
-    }
 
-    // Implementation of the StationService
+{
     public class StationService : IStationService
     {
-        private readonly List<Station> _stations;
         private readonly IMemoryCache _cache;
-        private const string ALL_STATIONS_CACHE_KEY = "all_stations";
-        private static readonly TimeSpan CacheDuration = TimeSpan.FromMinutes(5);
+        private readonly ILogger<StationService> _logger;
+        private const string CacheKey = "stations_v1";
+        private readonly string _jsonFilePath;
 
-        // Constructor
-        public StationService(IMemoryCache cache)
+        public MemoryCache Memory { get; }
+
+        public StationService(IMemoryCache cache, ILogger<StationService> logger, IConfiguration config)
         {
             _cache = cache;
-            _stations = LoadStationsFromJson();
+            _logger = logger;
+
+            _jsonFilePath = config["DataFiles:Stations"]
+                ?? "Data/stations.json";
+
+            LoadStationsIntoCache();
         }
 
-        // Load stations from JSON file
-        private List<Station> LoadStationsFromJson()
+        public StationService(MemoryCache memory)
         {
-            try
-            {
-                string filePath = Path.Combine(AppContext.BaseDirectory, "Data", "dublinbike.json");
-
-                if (!File.Exists(filePath))
-                {
-                    throw new FileNotFoundException($"Station data file not found at: {filePath}");
-                }
-
-                string jsonContent = File.ReadAllText(filePath);
-
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                  
-                };
-
-                var stations = JsonSerializer.Deserialize<List<Station>>(jsonContent, options);
-
-
-                Console.WriteLine($"Loaded {stations?.Count ?? 0} stations from JSON");
-
-                return stations ?? new List<Station>();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error loading stations: {ex.Message}");
-                return new List<Station>();
-            }
+            Memory = memory;
         }
 
+        private void LoadStationsIntoCache()
+        {
+            if (!File.Exists(_jsonFilePath))
+            {
+                _logger.LogError("Stations JSON file missing: {path}", _jsonFilePath);
+                _cache.Set(CacheKey, new List<Station>());
+                return;
+            }
 
-        // Get all stations with caching
+            var json = File.ReadAllText(_jsonFilePath);
+            var stations = JsonSerializer.Deserialize<List<Station>>(json)
+                           ?? new List<Station>();
+
+            _logger.LogInformation("Loaded {count} stations into cache.", stations.Count);
+
+            _cache.Set(CacheKey, stations);
+        }
+
         public List<Station> GetAllStations()
         {
-            return _cache.GetOrCreate(ALL_STATIONS_CACHE_KEY, entry =>
-
-            {
-                entry.AbsoluteExpirationRelativeToNow = CacheDuration;
-                Console.WriteLine($"Cache miss - Loading stations into cache (expires in {CacheDuration.TotalMinutes} minutes)");
-                return _stations;
-
-            }) ?? new List<Station>();
+            return _cache.Get<List<Station>>(CacheKey) ?? new List<Station>();
         }
 
-
-        // Get a station by its number with caching
         public Station? GetStationByNumber(int number)
         {
+            return GetAllStations().FirstOrDefault(s => s.Number == number);
+        }
 
-            string cacheKey = $"station_{number}";
-
-            return _cache.GetOrCreate(cacheKey, entry =>
-            {
-                entry.AbsoluteExpirationRelativeToNow = CacheDuration;
-                var station = _stations.FirstOrDefault(s => s.Number == number);
-
-                if (station != null)
-                {
-                    Console.WriteLine($"Cache miss - Loading station {number} into cache");
-                }
-
-                return station;
-            });
+        public void SaveAllStations(List<Station> stations)
+        {
+            _cache.Set(CacheKey, stations);
         }
     }
 }

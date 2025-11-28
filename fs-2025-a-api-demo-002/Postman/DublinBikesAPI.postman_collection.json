@@ -1,0 +1,226 @@
+﻿{
+  "info": {
+    "name": "Dublin Bikes API",
+    "_postman_id": "db-api-collection-2025",
+    "description": "Full Postman test suite for FS 2025 Assessment #1 – Dublin Bikes API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "V1 API",
+      "item": [
+        {
+          "name": "GET - All Stations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://localhost:7259/api/v1/stations",
+              "protocol": "https",
+              "host": [ "localhost" ],
+              "port": "7259",
+              "path": [ "api", "v1", "stations" ]
+            }
+          }
+        },
+        {
+          "name": "GET - Station by Number",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "https://localhost:7259/api/v1/stations/30",
+              "protocol": "https",
+              "host": [ "localhost" ],
+              "port": "7259",
+              "path": [ "api", "v1", "stations", "30" ]
+            }
+          }
+        },
+        {
+          "name": "GET - Filter (status=OPEN)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "https://localhost:7259/api/v1/stations?status=OPEN",
+              "protocol": "https",
+              "host": [ "localhost" ],
+              "port": "7259",
+              "path": [ "api", "v1", "stations" ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "OPEN"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET - Filter (minBikes=10)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "https://localhost:7259/api/v1/stations?minBikes=10",
+              "protocol": "https",
+              "host": [ "localhost" ],
+              "port": "7259",
+              "path": [ "api", "v1", "stations" ],
+              "query": [
+                {
+                  "key": "minBikes",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET - Search (q=PARNELL)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "https://localhost:7259/api/v1/stations?q=PARNELL",
+              "protocol": "https",
+              "host": [ "localhost" ],
+              "port": "7259",
+              "path": [ "api", "v1", "stations" ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "PARNELL"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET - Sorted by Available Bikes (DESC)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "https://localhost:7259/api/v1/stations?sort=availablebikes&dir=desc",
+              "protocol": "https",
+              "host": [ "localhost" ],
+              "port": "7259",
+              "path": [ "api", "v1", "stations" ],
+              "query": [
+                {
+                  "key": "sort",
+                  "value": "availablebikes"
+                },
+                {
+                  "key": "dir",
+                  "value": "desc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET - Summary",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "https://localhost:7259/api/v1/stations/summary",
+              "protocol": "https",
+              "host": [ "localhost" ],
+              "port": "7259",
+              "path": [ "api", "v1", "stations", "summary" ]
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "V2 API (CosmosDB)",
+      "item": [
+        {
+          "name": "GET - All Stations (Cosmos)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "https://localhost:7259/api/v2/stations",
+              "protocol": "https",
+              "host": [ "localhost" ],
+              "port": "7259",
+              "path": [ "api", "v2", "stations" ]
+            }
+          }
+        },
+        {
+          "name": "GET - Station by Number (Cosmos)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "https://localhost:7259/api/v2/stations/30",
+              "protocol": "https",
+              "host": [ "localhost" ],
+              "port": "7259",
+              "path": [ "api", "v2", "stations", "30" ]
+            }
+          }
+        },
+        {
+          "name": "POST - Create Station (Cosmos)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"number\": 999,\n  \"contract_name\": \"dublin\",\n  \"name\": \"TEST STATION\",\n  \"address\": \"SOME ADDRESS\",\n  \"position\": {\n    \"lat\": 53.35,\n    \"lng\": -6.26\n  },\n  \"banking\": false,\n  \"bonus\": false,\n  \"bike_stands\": 20,\n  \"available_bike_stands\": 10,\n  \"available_bikes\": 10,\n  \"status\": \"OPEN\",\n  \"last_update\": 0\n}"
+            },
+            "url": {
+              "raw": "https://localhost:7259/api/v2/stations",
+              "protocol": "https",
+              "host": [ "localhost" ],
+              "port": "7259",
+              "path": [ "api", "v2", "stations" ]
+            }
+          }
+        },
+        {
+          "name": "PUT - Update Station (Cosmos)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"number\": 999,\n  \"contract_name\": \"dublin\",\n  \"name\": \"UPDATED STATION\",\n  \"address\": \"NEW ADDRESS\",\n  \"position\": {\n    \"lat\": 53.35,\n    \"lng\": -6.26\n  },\n  \"banking\": false,\n  \"bonus\": false,\n  \"bike_stands\": 20,\n  \"available_bike_stands\": 5,\n  \"available_bikes\": 15,\n  \"status\": \"OPEN\",\n  \"last_update\": 0\n}"
+            },
+            "url": {
+              "raw": "https://localhost:7259/api/v2/stations/999",
+              "protocol": "https",
+              "host": [ "localhost" ],
+              "port": "7259",
+              "path": [ "api", "v2", "stations", "999" ]
+            }
+          }
+        },
+        {
+          "name": "GET - Summary (Cosmos)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "https://localhost:7259/api/v2/stations/summary",
+              "protocol": "https",
+              "host": [ "localhost" ],
+              "port": "7259",
+              "path": [ "api", "v2", "stations", "summary" ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

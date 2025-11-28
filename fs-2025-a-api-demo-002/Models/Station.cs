@@ -13,7 +13,7 @@ namespace fs_2025_assessment_1_75026.Models
         [JsonProperty("number")]
         public int Number { get; set; }
 
-        [JsonProperty("contractname")]
+        [JsonProperty("contractName")]
         public string ContractName { get; set; } = string.Empty;
 
         [JsonProperty("name")]

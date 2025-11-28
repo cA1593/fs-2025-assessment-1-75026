@@ -35,17 +35,6 @@ namespace fs_2025_a_api_demo_002.Endpoints
 
         }
 
-        //private static async Task<IResult> LoadCachedCourseById([FromServices] IMemoryCache _cache, [FromServices] CourseData courseData, int id)
-        //{
-        //    var output = courseData.Courses.FirstOrDefault(c => c.id == id);
-        //    if (output is null)
-        //    {
-        //        return Results.NotFound();
-        //    }
-        //    return Results.Ok(output);
-
-        //}
-
         private static async Task<IResult> LoadCachedCourseById(
     [FromServices] IMemoryCache cache,
     [FromServices] CourseData courseData,
