@@ -24,6 +24,7 @@ builder.Services.AddMemoryCache();
 builder.Services.AddHostedService<StationUpdateBackgroundService>();
 
 
+// Register CosmosClient
 
 builder.Services.AddSingleton(s =>
 {
@@ -56,9 +57,11 @@ app.AddRootEndPoints();
 app.AddBookEndPoints();
 app.AddCourseEndPoints();
 
+// V1 Endpoints
+app.AddStationEndPoints();
 
-app.AddStationEndPoints(); // V1
-app.AddStationV2EndPoints(); //V2
+// V2 Endpoints
+app.AddStationV2EndPoints(); 
 
 
 app.Run();

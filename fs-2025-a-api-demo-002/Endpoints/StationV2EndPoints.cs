@@ -111,15 +111,48 @@ namespace fs_2025_assessment_1_75026.Endpoints
                 return Results.Ok(summary);
             });
 
-            
+
             // POST /api/v2/stations
-            
+
             group.MapPost("/", async (
                 CosmosStationService cosmosService,
                 [FromBody] Station station) =>
             {
+
+                // CosmosDB requires id
+                if (string.IsNullOrWhiteSpace(station.Id))
+                    station.Id = Guid.NewGuid().ToString();
+
+                // Ensure contractName is lowercase because Cosmos contains "dublin"
+                station.ContractName = station.ContractName.ToUpper();
+
+
+
                 var created = await cosmosService.CreateStationAsync(station);
+
                 return Results.Created($"/api/v2/stations/{station.Number}", created);
+            });
+
+            // PUT /api/v2/stations/{number}
+
+            group.MapPut("/{number}", async (
+                CosmosStationService cosmosService,
+                int number,
+                [FromBody] Station updated) =>
+            {
+                var existing = await cosmosService.GetStationByNumberAsync(number);
+
+                if (existing == null)
+                    return Results.NotFound(new { message = $"Station {number} not found in CosmosDB" });
+
+                // Preserve original contractName and number
+                updated.Number = existing.Number;
+                updated.ContractName = existing.ContractName;
+
+                updated.Id = existing.Id;   // keep CosmosDB id
+
+                var result = await cosmosService.UpdateStationAsync(updated);
+                return Results.Ok(result);
             });
 
         }

@@ -1,65 +1,63 @@
-﻿using System.Text.Json.Serialization;
+﻿using Microsoft.Azure.Cosmos.Spatial;
+using System.Text.Json.Serialization;
+
+using Newtonsoft.Json;
 
 namespace fs_2025_assessment_1_75026.Models
 {
     public class Station
     {
-        [JsonPropertyName("number")]
+        [JsonProperty("id")]
+        public string Id { get; set; } = string.Empty;
+
+        [JsonProperty("number")]
         public int Number { get; set; }
 
-        [JsonPropertyName("contract_name")]
+        [JsonProperty("contractname")]
         public string ContractName { get; set; } = string.Empty;
 
-        [JsonPropertyName("name")]
+        [JsonProperty("name")]
         public string Name { get; set; } = string.Empty;
 
-        [JsonPropertyName("address")]
+        [JsonProperty("address")]
         public string Address { get; set; } = string.Empty;
 
-        [JsonPropertyName("position")]
-        public GeoPosition Position { get; set; } = new();
+        [JsonProperty("position")]
+        public Position Position { get; set; } = new Position();
 
-        [JsonPropertyName("banking")]
+        [JsonProperty("banking")]
         public bool Banking { get; set; }
 
-        [JsonPropertyName("bonus")]
+        [JsonProperty("bonus")]
         public bool Bonus { get; set; }
 
-        [JsonPropertyName("bike_stands")]
+        [JsonProperty("bike_stands")]
         public int BikeStands { get; set; }
 
-        [JsonPropertyName("available_bike_stands")]
+        [JsonProperty("available_bike_stands")]
         public int AvailableBikeStands { get; set; }
 
-        [JsonPropertyName("available_bikes")]
+        [JsonProperty("available_bikes")]
         public int AvailableBikes { get; set; }
 
-        [JsonPropertyName("status")]
+        [JsonProperty("status")]
         public string Status { get; set; } = string.Empty;
 
-        [JsonPropertyName("last_update")]
+        [JsonProperty("last_update")]
         public long LastUpdate { get; set; }
 
-        // Computed properties 
-        public DateTime LastUpdateDateTime =>
-            DateTimeOffset.FromUnixTimeMilliseconds(LastUpdate).DateTime;
-
-        public DateTime LastUpdateLocal =>
-            TimeZoneInfo.ConvertTimeFromUtc(
-                LastUpdateDateTime,
-                TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time")
-            );
-
+        // Optional: Computed property, not saved in DB
+        [System.Text.Json.Serialization.JsonIgnore]
         public double Occupancy =>
-            BikeStands > 0 ? (double)AvailableBikes / BikeStands : 0.0;
+            BikeStands == 0 ? 0 : (double)AvailableBikes / BikeStands;
     }
 
-    public class GeoPosition
+    public class Position
     {
-        [JsonPropertyName("lat")]
+        [JsonProperty("lat")]
         public double Lat { get; set; }
 
-        [JsonPropertyName("lng")]
+        [JsonProperty("lng")]
         public double Lng { get; set; }
     }
 }
